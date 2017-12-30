@@ -1,14 +1,34 @@
+// L2yFo91v5gyqpq4i
+
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
 
 const employeesRoute = require('./api/routes/employees');
+
+
+mongoose.connect('mongodb://effg:' + process.env.MONGO_ATLAS_PW + '@employees-shard-00-00-tx7nb.mongodb.net:27017,employees-shard-00-01-tx7nb.mongodb.net:27017,employees-shard-00-02-tx7nb.mongodb.net:27017/test?ssl=true&replicaSet=employees-shard-0&authSource=admin', 
+{
+    useMongoClient: true
+}
+);
 
 app.use(bodyParser.urlencoded({
     extended: false
 }));
 app.use(bodyParser.json());
 
+//handle CORS
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+    if (req.method === 'OPTIONS') {
+        res.header('Access-Control-Allow-Methods', 'PUT, POST, PATCH, PUT, DELETE');
+        return res.status(200).json({});
+    }
+    next();
+});
 
 const PORT = process.env.PORT || 3000;
 
