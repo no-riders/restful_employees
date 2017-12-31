@@ -99,11 +99,11 @@ DELETE to `/shifts/<shiftID>`
 
 3. Create a copy of the nodemon.json file and add values for the keys (env)
    
-   ```
+```
 {
     "env": {
-        "MONGO_ATLAS_PW": "your passw",
+        "MONGO_ATLAS_PW": "your atlas passw",
         "JWT_KEY": "jwt secret"
 	    }
 }
-   ```
+```
