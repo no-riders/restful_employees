@@ -38,7 +38,7 @@ app.get('/', (req, res) => {
 
 app.post('/', (req, res) => {
     const employee = new Employee({
-        _id: mongoose.Types.ObjectId(),
+        _id: new mongoose.Types.ObjectId(),
         name: req.body.name,
         sex: req.body.sex,
         contacts: req.body.contacts

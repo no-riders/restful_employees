@@ -5,6 +5,7 @@ const mongoose = require('mongoose');
 
 const employeesRoute = require('./api/routes/employees');
 const shiftsRoute = require('./api/routes/shifts');
+const userRoute = require('./api/routes/user');
 
 
 mongoose.connect('mongodb://effg:' + process.env.MONGO_ATLAS_PW + '@employees-shard-00-00-tx7nb.mongodb.net:27017,employees-shard-00-01-tx7nb.mongodb.net:27017,employees-shard-00-02-tx7nb.mongodb.net:27017/test?ssl=true&replicaSet=employees-shard-0&authSource=admin', 
@@ -35,6 +36,7 @@ const PORT = process.env.PORT || 3000;
 
 app.use('/employees', employeesRoute);
 app.use('/shifts', shiftsRoute);
+app.use('/user', userRoute)
 
 //must be after all routes
 app.use((req, res, next) => {
