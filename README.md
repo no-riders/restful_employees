@@ -1,4 +1,5 @@
-# restful_employees
+## Created with
+`NodeJS`, `express`, `Mongo Atlas`, `mongoose`, `bcrypt`, `jsonwebtoken`
 
 ## EMPLOYEES
 
@@ -77,3 +78,27 @@ DELETE to `/shifts/<shiftID>`
 }
 ```
   
+## Installation
+
+1. Clone repository and change directory:
+
+   ```
+   git clone https://github.com/no-riders/restful_employees && cd restful_employees
+   ```
+
+2. Install node dependencies:
+
+   ```
+   npm install
+   ```
+
+3. Create a copy of the nodemon.json file and add values for the keys (env)
+   
+   ```
+{
+    "env": {
+        "MONGO_ATLAS_PW": "your passw",
+        "JWT_KEY": "jwt secret"
+	    }
+}
+   ```
