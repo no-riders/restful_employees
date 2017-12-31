@@ -38,7 +38,7 @@ app.get('/', (req, res) => {
 
 app.post('/', (req, res) => {
     const employee = new Employee({
-        _id: new mongoose.Types.ObjectId(),
+        _id: mongoose.Types.ObjectId(),
         name: req.body.name,
         sex: req.body.sex,
         contacts: req.body.contacts
@@ -71,16 +71,20 @@ app.get('/:id', (req, res) => {
     Employee.findById(id)
     .select('name sex contacts _id dateCreated')
     .exec()
-    .then(doc => {
-        console.log('From the DB ' + doc);
-        doc ? res.status(200).json({
-            employee: doc,
+    .then(employee => {
+        if(!employee) {
+            return res.status(404).json({
+                message: 'Employee is not in Database'
+            })
+        }
+        res.status(200).json({
+            employee: employee,
             reuest: {
                 type: 'GET',
                 description: 'Get all employees',
                 url: 'http://localhost:3000/employees'
             }
-        }) : res.status(404).json({ message: "No valid entry found for provided ID: " + id })
+        })
     })
     .catch(err => {
         console.log(err);
@@ -121,10 +125,10 @@ app.delete('/:id', (req, res) => {
     .exec()
     .then(result => {
         res.status(200).json({
-            message: 'Employee has been removed from the Data Base',
+            message: 'Employee has been removed from the Database',
             request: {
                 type: 'POST',
-                description: 'To add new Employee follow this pttern',
+                description: 'To add new Employee follow this pattern',
                 url: 'http://localhost:3000/employees',
                 body: {
                     name: 'String',
