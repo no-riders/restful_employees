@@ -1,5 +1,10 @@
 ## Created with
-`NodeJS`, `express`, `Mongo Atlas`, `mongoose`, `bcrypt`, `jsonwebtoken`
+* `NodeJS`,
+* `express`,
+* `Mongo Atlas`,
+* `mongoose`,
+* `bcrypt`,
+* `jsonwebtoken`
 
 ## EMPLOYEES
 
