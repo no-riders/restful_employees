@@ -1,5 +1,3 @@
-// L2yFo91v5gyqpq4i
-
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
@@ -13,6 +11,8 @@ mongoose.connect('mongodb://effg:' + process.env.MONGO_ATLAS_PW + '@employees-sh
     useMongoClient: true
 }
 );
+
+mongoose.Promise = global.Promise;
 
 app.use(bodyParser.urlencoded({
     extended: false

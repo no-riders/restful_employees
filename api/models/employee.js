@@ -3,9 +3,9 @@ const mongoose = require('mongoose');
 
 let EmployeeSchema = mongoose.Schema({
     _id: mongoose.Schema.Types.ObjectId,
-    name: String,
+    name: { type: String, required: true },
     sex: String,
-    contacts: String,
+    contacts: { type: Number, required: true },
     dateCreated: { type: Date, default: Date.now }
 });
 
