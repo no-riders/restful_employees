@@ -5,6 +5,13 @@ const mongoose = require('mongoose');
 
 const Employee = require('../models/employee');
 
+const errorCatch = (res) => {
+    (err) => {
+      console.log(err);
+      res.status(500).json({ error: err });
+    };
+}
+
 
 app.get('/', (req, res) => {
     Employee.find()
@@ -30,10 +37,7 @@ app.get('/', (req, res) => {
         }
         res.send(response);
     })
-    .catch(err => {
-        console.log(err);
-        res.status(500).json({ error: err })
-    })
+    .catch(errorCatch(res))
 });
 
 app.post('/', (req, res) => {
@@ -60,10 +64,7 @@ app.post('/', (req, res) => {
             }
         })
     })
-    .catch(err => {
-        console.log(err);
-        res.status(500).json({ error: err })
-    })
+    .catch(errorCatch(res))
 });
 
 app.get('/:id', (req, res) => {
@@ -86,10 +87,7 @@ app.get('/:id', (req, res) => {
             }
         })
     })
-    .catch(err => {
-        console.log(err);
-        res.status(500).json({ error: err })
-    })
+    .catch(errorCatch(res))
 })
 
 app.patch('/:id', (req, res) => {
@@ -102,46 +100,44 @@ app.patch('/:id', (req, res) => {
     }
 
     Employee.update({ _id: id }, { $set: updateOps })
-    .exec()
-    .then(result => {
-        res.status(200).json({
-            message: 'Employee info has been updated',
+      .exec()
+      .then(result => {
+        res
+          .status(200)
+          .json({
+            message: "Employee info has been updated",
             request: {
-                type: 'GET',
-                description: 'Get dettailed info about Employee',
-                url: 'http://localhost:3000/employees/' + id
+              type: "GET",
+              description: "Get dettailed info about Employee",
+              url: "http://localhost:3000/employees/" + id
             }
-        });
-    })
-    .catch(err => {
-        console.log(err);
-        res.status(500).json({ error: err })
-    })
+          });
+      })
+      .catch(errorCatch(res));
 })
 
 app.delete('/:id', (req, res) => {
     const id = req.params.id;
     Employee.remove({ _id: id })
-    .exec()
-    .then(result => {
-        res.status(200).json({
-            message: 'Employee has been removed from the Database',
+      .exec()
+      .then(result => {
+        res
+          .status(200)
+          .json({
+            message: "Employee has been removed from the Database",
             request: {
-                type: 'POST',
-                description: 'To add new Employee follow this pattern',
-                url: 'http://localhost:3000/employees',
-                body: {
-                    name: 'String',
-                    sex: 'String',
-                    contacts: Number
-                }
+              type: "POST",
+              description: "To add new Employee follow this pattern",
+              url: "http://localhost:3000/employees",
+              body: {
+                name: "String",
+                sex: "String",
+                contacts: Number
+              }
             }
-        })
-    })
-    .catch(err => {
-        console.log(err);
-        res.status(500).json({ error: err })
-    })
+          });
+      })
+      .catch(errorCatch(res));
 })
 
 module.exports = app;
