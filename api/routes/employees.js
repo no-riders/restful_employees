@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 
 
 const Employee = require('../models/employee');
+const Shift = require('../models/shift');
 
 
 const { errorCatch, requestGet, requestPost } = require('../utils/helpers');
@@ -25,19 +26,22 @@ const descriptionAddBody = {
 
 app.get('/', (req, res) => {
     Employee.find()
-    .select('name sex contacts _id dateCreated') //to get fields what we need
+    .select('shift _id name sex contacts dateCreated') //to get fields what we need
+    .populate('shift')
     .exec()
     .then(docs => {
         const response = {
             count: docs.length,
             //create more info regarding each employee
             employees: docs.map(doc => {
-                const { name, sex, contacts, _id, dateCreated } = doc;
+                const { name, sex, contacts, _id, dateCreated, shift } = doc;
+                console.log(shift);
                 return {
+                    _id,
+                    shift,
                     name, 
                     sex, 
                     contacts,
-                    _id,
                     dateCreated,
                     request: requestGet(url, _id)
                 }
@@ -77,7 +81,8 @@ app.post('/', (req, res) => {
 app.get('/:id', (req, res) => {
     const id = req.params.id;
     Employee.findById(id)
-    .select('name sex contacts _id dateCreated')
+    .select('_id shift name sex contacts dateCreated')
+    .populate('shift')
     .exec()
     .then(employee => {
         if(!employee) {

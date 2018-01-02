@@ -36,7 +36,7 @@ const PORT = process.env.PORT || 3000;
 
 app.use('/employees', employeesRoute);
 app.use('/shifts', shiftsRoute);
-app.use('/user', userRoute)
+app.use('/user', userRoute);
 
 //must be after all routes
 app.use((req, res, next) => {

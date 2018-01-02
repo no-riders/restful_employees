@@ -5,18 +5,22 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
 const User = require('../models/user');
-const errorCatch = require('./employees');
+const { errorCatch } = require('../utils/helpers');
+
+const authFailed = (res) => {
+    return res.status(401).json({ message: "Auth Failed" });
+}
 
 // create new user
 app.post('/signup', (req, res) => {
-    User.find({email: req.body.email})
+    User.find({ email: req.body.email })
     .exec()
     .then(user => {
-        if(user.length >= 1) {
+        if (user.length >= 1) {
             return res.status(409).json({
                 message: 'Email address is already in Database'
             })
-        } else{
+        } else {
             bcrypt.hash(req.body.password, 10, (err, hash) => {
                 if (err) {
                     return res.status(500).json({
@@ -49,15 +53,11 @@ app.post('/login', (req, res) => {
     .exec()
     .then(user => {
         if(user.length < 1) {
-            return res.status(401).json({
-                message: 'Auth Failed'
-            })
+            return authFailed(res)
         }
         bcrypt.compare(req.body.password, user[0].password, (err, result) => {
             if(err) {
-                return res.status(401).json({
-                    message: 'Auth Failed'
-                })
+                return authFailed(res)
             }
             if (result) {
                 const token = jwt.sign(
@@ -75,9 +75,7 @@ app.post('/login', (req, res) => {
                     token: token
                 })
             }
-            res.status(401).json({
-                message: 'Auth Failed'
-            })
+            authFailed(res)
         })
     })
     .catch(errorCatch(res))

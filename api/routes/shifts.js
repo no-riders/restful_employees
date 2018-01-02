@@ -25,15 +25,19 @@ const descriptionAddBody = {
 app.get('/', (req, res) => {
     Shift.find()
     .select('_id employee date shiftStart shiftEnd')
+    .populate('employee')
     .exec()
     .then(docs => {
         res.status(200).json({
             count: docs.length,
             shifts: docs.map(doc => {
-                const { _id, employee } = doc;
+                const { _id, employee, date, shiftStart, shiftEnd } = doc;
                 return {
                     _id,
                     employee,
+                    date,
+                    shiftStart,
+                    shiftEnd,
                     request: requestGet(url, _id)
                 }
             })
