@@ -5,11 +5,21 @@ const mongoose = require('mongoose');
 
 const Employee = require('../models/employee');
 
-const errorCatch = (res) => {
-    (err) => {
-      console.log(err);
-      res.status(500).json({ error: err });
-    };
+
+const { errorCatch, requestGet, requestPost } = require('../utils/helpers');
+
+const detailedInfoStr = 'Get detailed info about Employee';
+const descriptionAddStr = 'To add new Employee follow this pattern';
+const url = 'http://localhost:3000/employees/'
+const descriptionAddBody = {
+    type: "POST",
+    description: descriptionAddStr,
+    url,
+    body: {
+        name: "String",
+        sex: "String",
+        contacts: Number
+    }
 }
 
 
@@ -22,16 +32,14 @@ app.get('/', (req, res) => {
             count: docs.length,
             //create more info regarding each employee
             employees: docs.map(doc => {
+                const { name, sex, contacts, _id, dateCreated } = doc;
                 return {
-                    name: doc.name,
-                    sex: doc.sex,
-                    contacts: doc.contacts,
-                    _id: doc._id,
-                    dateCreated: doc.dateCreated,
-                    request: {
-                        type: 'GET',
-                        url: 'http://localhost:3000/employees/' + doc._id
-                    }
+                    name, 
+                    sex, 
+                    contacts,
+                    _id,
+                    dateCreated,
+                    request: requestGet(url, _id)
                 }
             })
         }
@@ -41,26 +49,25 @@ app.get('/', (req, res) => {
 });
 
 app.post('/', (req, res) => {
+    const { name, sex, contacts, dateCreated } = req.body;
     const employee = new Employee({
         _id: new mongoose.Types.ObjectId(),
-        name: req.body.name,
-        sex: req.body.sex,
-        contacts: req.body.contacts
+        name,
+        sex,
+        contacts
     })
     employee.save()
     .then(result => {
+        const { name, sex, contacts, _id, dateCreated } = result;
         res.status(201).json({
             message: "New Employee has been added successfully",
             createdEmployee: {
-                name: result.name,
-                    sex: result.sex,
-                    contacts: result.contacts,
-                    _id: result._id,
-                    dateCreated: result.dateCreated,
-                    request: {
-                        type: 'GET',
-                        url: 'http://localhost:3000/employees/' + result._id
-                    }
+                name,
+                sex, 
+                contacts,
+                _id, 
+                dateCreated,
+                request: requestGet(url, _id)
             }
         })
     })
@@ -79,12 +86,8 @@ app.get('/:id', (req, res) => {
             })
         }
         res.status(200).json({
-            employee: employee,
-            reuest: {
-                type: 'GET',
-                description: 'Get all employees',
-                url: 'http://localhost:3000/employees'
-            }
+            employee,
+            request: requestGet(url, id, detailedInfoStr)
         })
     })
     .catch(errorCatch(res))
@@ -106,11 +109,7 @@ app.patch('/:id', (req, res) => {
           .status(200)
           .json({
             message: "Employee info has been updated",
-            request: {
-              type: "GET",
-              description: "Get dettailed info about Employee",
-              url: "http://localhost:3000/employees/" + id
-            }
+            request: requestGet(url, id, detailedInfoStr)
           });
       })
       .catch(errorCatch(res));
@@ -125,19 +124,10 @@ app.delete('/:id', (req, res) => {
           .status(200)
           .json({
             message: "Employee has been removed from the Database",
-            request: {
-              type: "POST",
-              description: "To add new Employee follow this pattern",
-              url: "http://localhost:3000/employees",
-              body: {
-                name: "String",
-                sex: "String",
-                contacts: Number
-              }
-            }
+            request: requestPost(url, descriptionAddStr)
           });
       })
       .catch(errorCatch(res));
 })
 
-module.exports = app;
+module.exports = app, errorCatch;

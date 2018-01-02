@@ -5,6 +5,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
 const User = require('../models/user');
+const errorCatch = require('./employees');
 
 // create new user
 app.post('/signup', (req, res) => {
@@ -35,10 +36,7 @@ app.post('/signup', (req, res) => {
                             message: 'User Created'
                         })
                     })
-                    .catch((err => {
-                        console.log(err);
-                        res.status(500).json({ error: err })
-                    }))
+                    .catch(errorCatch(res))
                 }
             })
         }
@@ -82,10 +80,7 @@ app.post('/login', (req, res) => {
             })
         })
     })
-    .catch((err => {
-        console.log(err);
-        res.status(500).json({ error: err })
-    }))
+    .catch(errorCatch(res))
 })
 
 app.delete('/:userID', (req, res) => {
@@ -96,10 +91,7 @@ app.delete('/:userID', (req, res) => {
             message: 'User has been removed'
         });
     })
-    .catch((err => {
-        console.log(err);
-        res.status(500).json({ error: err })
-    }))
+    .catch(errorCatch(res))
 })
 
 

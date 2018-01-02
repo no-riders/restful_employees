@@ -5,6 +5,23 @@ const mongoose = require('mongoose');
 const Shift = require('../models/shift');
 const Employee = require('../models/employee');
 
+
+const { errorCatch, requestGet, requestPost } = require('../utils/helpers');
+
+const detailedInfoStr = 'Get detailed info about Shift';
+const descriptionAddStr = 'To add new Shift follow this pattern';
+const url = 'http://localhost:3000/shifts/'
+const descriptionAddBody = {
+    type: "POST",
+    description: descriptionAddStr,
+    url,
+    body: {
+        employeeID: 'ID',
+        startShift: 'Date',
+        endShift: 'Date'
+    }
+}
+
 app.get('/', (req, res) => {
     Shift.find()
     .select('_id employee date shiftStart shiftEnd')
@@ -13,13 +30,11 @@ app.get('/', (req, res) => {
         res.status(200).json({
             count: docs.length,
             shifts: docs.map(doc => {
+                const { _id, employee } = doc;
                 return {
-                    _id: doc._id,
-                    employee: doc.employee,
-                    request: {
-                        type: 'GET',
-                        url: 'http://localhost:3000/shifts/' + doc._id
-                    }
+                    _id,
+                    employee,
+                    request: requestGet(url, _id)
                 }
             })
         })
@@ -43,23 +58,19 @@ app.post('/', (req, res) => {
         .save()
     })
     .then(result => {
+        const { _id, employee, startShift, endShift } = result;
         res.status(201).json({
             message: 'Shift logged',
             loggedShift: {
-                _id: result._id,
-                employee: result.employee,
-                startShift: result.startShift,
-                endShift: result.endShift
+                _id,
+                employee,
+                startShift,
+                endShift
             },
-            request: {
-                type: 'GET',
-                url: 'http://localhost:3000/shifts/' + result._id
-            }
+            request: requestGet(url, _id)
         })
     })
-    .catch(err => {
-        res.status(500).json({ err })
-    })
+    .catch(errorCatch(res))
 })
 
 app.get('/:shiftID', (req, res) => {
@@ -73,16 +84,11 @@ app.get('/:shiftID', (req, res) => {
             })
         }
         res.status(200).json({
-            shift: shift,
-            request: {
-                type: 'GET',
-                url: 'http://localhost:3000/shifts'
-            }
+            shift,
+            request: requestGet(url, id)
         })
     })
-    .catch(err => {
-        res.status(500).json({ error: err })
-    })
+    .catch(errorCatch(res))
 })
 
 app.delete('/:shiftID', (req, res) => {
@@ -91,21 +97,10 @@ app.delete('/:shiftID', (req, res) => {
     .then(result => {
         res.status(200).json({
             message: 'Shift deleted',
-            request: {
-                type: 'POST',
-                description: 'To add new Shift follow this pattern',
-                url: 'http://localhost:3000/shifts',
-                body: {
-                    employeeID: 'ID',
-                    startShift: 'Date',
-                    endShift: 'Date'
-                }
-            }
+            request: requestPost()
         })
     })
-    .catch(err => {
-        res.status(500).json({ error: err })
-    })
+    .catch(errorCatch(res))
 })
 
 
