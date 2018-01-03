@@ -1,3 +1,16 @@
+const requestPost = (url, descriptionAddStr) => {
+    return {
+        type: "POST",
+        description: descriptionAddStr,
+        url,
+        body: {
+          name: "String",
+          sex: "String",
+          contacts: Number
+        }
+    }
+};
+
 const errorCatch = (res) => {
     (err) => {
       console.log(err);
@@ -19,7 +32,6 @@ const requestGet = (url, id, desc) => {
     }
 }
 
-const requestPost = () => descriptionAddBody;
 
 module.exports = { 
     errorCatch,
